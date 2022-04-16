@@ -64,3 +64,39 @@ CHOICES = [
 ]
 
 # Create your models here.
+class NeighbourHood(models.Model):
+    title = models.CharField(max_length=150, verbose_name='Neighbourhood Title', null=True, blank=True)
+    description = models.TextField(max_length=254, blank=True, verbose_name='Description')
+    location = models.CharField(max_length=150, verbose_name='Neighbourhood Location', null=True, blank=True)
+    county = models.CharField(choices=COUNTIES, max_length=150, verbose_name='Neighbourhood County', null=True, blank=True)
+    neighbourhood_logo = CloudinaryField('neighbourhood_logo')
+    # neighbourhood_logo = models.ImageField(upload_to='Neighbourhood-Logo', verbose_name='Neighbourhood-Logo')
+    neighbourhood_admin = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Neighbourhood Admin')
+    health_department = models.CharField(max_length=15, null=True, blank=True, verbose_name='Health Department')
+    police_department = models.CharField(max_length=15, null=True, blank=True, verbose_name='Police Department')
+    date_created = models.DateTimeField(auto_now_add=True, verbose_name='Date Created')
+    date_updated = models.DateTimeField(auto_now=True, verbose_name='Date Updated')
+
+    def get_neighbourhoods(self):
+        neighbourhoods = NeighbourHood.objects.all()
+        return neighbourhoods
+    
+    def create_neigbourhood(self):
+        self.save()
+
+    def delete_neigbourhood(self):
+        self.delete()
+
+    def find_neigbourhood(self,neigborhood_id):
+        neigbourhood = NeighbourHood.objects.filter(self = neigborhood_id)
+        return neigbourhood
+
+    def update_neighborhood(self, id, title, location, county, neighbourhood_logo):
+        update = NeighbourHood.objects.filter(id = id).update(title = title , location = location, county = county, neighbourhood_logo = neighbourhood_logo)
+        return update
+
+    def __str__(self):
+        return str(self.title)
+    
+    class Meta:
+        verbose_name_plural = 'NeighbourHoods'
