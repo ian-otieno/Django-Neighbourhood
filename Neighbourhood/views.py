@@ -136,4 +136,47 @@ def Settings(request, username):
     else:
         form = PasswordChangeForm(data=request.POST, user=request.user)
         return render(request, "Settings.html", {'form': form, 'profile_details':profile_details})
+@login_required(login_url='Login')
+def EditProfile(request, username):
+    user = User.objects.get(username=username)
+    profile_details = Profile.objects.get(user = user.id)
+    if request.method == 'POST':
+        user_form = UpdateUserForm(request.POST, instance=request.user)
+        profile_form = UpdateProfileForm(request.POST, request.FILES, instance=request.user.profile)
+
+        if user_form.is_valid() and profile_form.is_valid():
+            profile_picture = profile_form.cleaned_data['profile_picture']
+            neighbourhood = profile_form.cleaned_data['neighbourhood']
+            bio = profile_form.cleaned_data['bio']
+            national_id = profile_form.cleaned_data['national_id']
+            first_name = user_form.cleaned_data['first_name']
+            last_name = user_form.cleaned_data['last_name']
+            username = user_form.cleaned_data['username']
+            user.username = username
+            user.first_name = first_name
+            user.last_name = last_name
+            profile_details.national_id = national_id
+            profile_details.bio = bio
+            profile_details.profile_picture = profile_picture
+            profile_details.neighbourHood = NeighbourHood.objects.get(pk=int(neighbourhood))
+
+            neighbourhood_obj = NeighbourHood.objects.get(pk=int(neighbourhood))
+            member = Membership.objects.filter(user = profile_details.id, neighbourhood_membership = neighbourhood_obj.id)
+
+            if not member:
+                messages.error(request, "⚠️ You Need To Be A Member of The Selected Neighbourhood First!")
+                return redirect('EditProfile', username=username)
+            else:   
+                user.save()
+                profile_details.save()
+                messages.success(request, '✅ Your Profile Has Been Updated Successfully!')
+                return redirect('EditProfile', username=username)
+        else:
+            messages.error(request, "⚠️ Your Profile Wasn't Updated!")
+            return redirect('EditProfile', username=username)
+    else:
+        user_form = UpdateUserForm(instance=request.user)
+        profile_form = UpdateProfileForm(instance=request.user.profile)
+
+    return render(request, 'Edit Profile.html', {'user_form': user_form, 'profile_form': profile_form, 'profile_details':profile_details})
    
