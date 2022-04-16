@@ -74,3 +74,20 @@ def Register(request):
 
     return render(request, 'Register.html')
 
+def ActivateAccount(request, uidb64, token):
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+    if user is not None and account_activation_token.check_token(user, token):
+        user.is_active = True
+        user.profile.email_confirmed = True
+        user.save()
+        messages.success(request, ('✅ Email Verified! You can now Log in'))
+        return redirect('Login')
+    else:
+        messages.error(request, ('⚠️ The confirmation link was invalid, possibly because it has already been used.'))
+        return redirect('Login')
+    
