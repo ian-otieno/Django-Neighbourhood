@@ -90,7 +90,7 @@ def ActivateAccount(request, uidb64, token):
     else:
         messages.error(request, ('⚠️ The confirmation link was invalid, possibly because it has already been used.'))
         return redirect('Login')
- def Login(request):
+def Login(request):
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
@@ -115,4 +115,25 @@ def ActivateAccount(request, uidb64, token):
 def Logout(request):
     logout(request)
     return redirect('Home')
+def Home(request):
+    neighbourhoods = NeighbourHood.objects.all()
+    return render(request, 'Index.html', {'neighbourhoods':neighbourhoods})
+
+@login_required(login_url='Login')
+def Settings(request, username):
+    username = User.objects.get(username=username)
+    profile_details = Profile.objects.get(user=username.id)
+    if request.method == "POST":
+        form = PasswordChangeForm(data=request.POST, user=request.user)
+        if form.is_valid():
+            form.save()
+            update_session_auth_hash(request, form.user)
+            messages.success(request, '✅ Your Password Has Been Updated Successfully!')
+            return redirect("Settings", username=username)
+        else:
+            messages.error(request, "⚠️ Your Password Wasn't Updated!")
+            return redirect("Settings", username=username)
+    else:
+        form = PasswordChangeForm(data=request.POST, user=request.user)
+        return render(request, "Settings.html", {'form': form, 'profile_details':profile_details})
    
