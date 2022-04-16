@@ -261,4 +261,46 @@ def MyPosts(request, username):
     profile_details = Profile.objects.get(user = profile.id)
     posts = Post.objects.filter(author = profile.id).all()
     return render(request, 'My Posts.html', {'posts':posts, 'profile_details':profile_details})
-   
+    
+def Search(request):
+    if request.method == 'POST':
+        search = request.POST['BusinessSearch']
+        print(search)
+        businesses = Business.objects.filter(name__icontains = search).all()
+        return render(request, 'Search Results.html', {'search':search, 'businesses':businesses})
+    else:
+        return render(request, 'Search Results.html')
+
+@login_required(login_url='Login')
+def AddPost(request, username):
+    user = User.objects.get(username=username)
+    profile = Profile.objects.get(user=user.id)
+
+    if request.method == "POST":
+        form = AddPostForm(request.POST)
+        if form.is_valid():
+            title = form.cleaned_data['title']
+            description = form.cleaned_data['description']
+            neighbourhood = form.cleaned_data['neighbourhood']
+            category = form.cleaned_data['category']
+
+            neighbourhood_obj = NeighbourHood.objects.get(pk=int(neighbourhood))
+            member = Membership.objects.filter(user = profile.id, neighbourhood_membership = neighbourhood_obj.id)
+
+            if not member:
+                messages.error(request, "⚠️ You Need To Be A Member of The Selected Neighbourhood First!")
+                return redirect('AddPost', username=username)
+
+            else:
+                neighbourhood_obj = NeighbourHood.objects.get(pk=int(neighbourhood))
+                new_post = Post(title = title, category = category, neighbourhood = neighbourhood_obj, description = description, author = request.user.profile)
+                new_post.save()
+
+                messages.success(request, '✅ Your Post Was Created Successfully!')
+                return redirect('MyPosts', username=username)
+        else:
+            messages.error(request, "⚠️ Your Post Wasn't Created!")
+            return redirect('AddPost', username=username)
+    else:
+        form = AddPostForm()
+    return render(request, 'AddPost.html', {'form':form})   
