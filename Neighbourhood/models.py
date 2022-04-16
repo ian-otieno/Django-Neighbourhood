@@ -70,7 +70,6 @@ class NeighbourHood(models.Model):
     location = models.CharField(max_length=150, verbose_name='Neighbourhood Location', null=True, blank=True)
     county = models.CharField(choices=COUNTIES, max_length=150, verbose_name='Neighbourhood County', null=True, blank=True)
     neighbourhood_logo = CloudinaryField('neighbourhood_logo')
-    # neighbourhood_logo = models.ImageField(upload_to='Neighbourhood-Logo', verbose_name='Neighbourhood-Logo')
     neighbourhood_admin = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Neighbourhood Admin')
     health_department = models.CharField(max_length=15, null=True, blank=True, verbose_name='Health Department')
     police_department = models.CharField(max_length=15, null=True, blank=True, verbose_name='Police Department')
@@ -100,3 +99,20 @@ class NeighbourHood(models.Model):
     
     class Meta:
         verbose_name_plural = 'NeighbourHoods'
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name='User')
+    bio = models.TextField(max_length=254, blank=True, verbose_name='Bio')
+    national_id = models.CharField(max_length=10, blank=True, verbose_name='National ID')
+    profile_picture = CloudinaryField('profile_picture')
+    neighbourHood = models.ForeignKey(NeighbourHood, on_delete=models.CASCADE, null=True, blank=True, verbose_name='NeighbourHood')
+    email_confirmed = models.BooleanField(default=False, verbose_name='Is Confirmed?')
+    date_created = models.DateTimeField(auto_now_add=True, verbose_name='Date Created')
+    date_updated = models.DateTimeField(auto_now=True, verbose_name='Date Updated')
+    
+    def __str__(self):
+        return str(self.user.username)
+    
+    class Meta:
+        verbose_name_plural = 'Profiles'
+       
