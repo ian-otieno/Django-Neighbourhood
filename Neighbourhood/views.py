@@ -238,4 +238,27 @@ def AddNeighbourhood(request, username):
     else:
         form = AddNeighbourhoodForm()
     return render(request, 'AddNeighbourhood.html', {'form':form, 'profile_details':profile_details})
+@login_required(login_url='Login')
+def MyNeighbourhoods(request, username):
+    profile = User.objects.get(username=username)
+    profile_details = Profile.objects.get(user = profile.id)
+    neighbourhoods = NeighbourHood.objects.filter(neighbourhood_admin = profile.id).all()
+    for neighbourhood in neighbourhoods:
+        print(neighbourhood.title)
+        print(neighbourhood.description)
+    return render(request, 'My Neighbourhoods.html', {'neighbourhoods':neighbourhoods, 'profile_details':profile_details})
+
+@login_required(login_url='Login')
+def MyBusinesses(request, username):
+    profile = User.objects.get(username=username)
+    profile_details = Profile.objects.get(user = profile.id)
+    businesses = Business.objects.filter(owner = profile.id).all()
+    return render(request, 'My Businesses.html', {'businesses':businesses, 'profile_details':profile_details})
+
+@login_required(login_url='Login')
+def MyPosts(request, username):
+    profile = User.objects.get(username=username)
+    profile_details = Profile.objects.get(user = profile.id)
+    posts = Post.objects.filter(author = profile.id).all()
+    return render(request, 'My Posts.html', {'posts':posts, 'profile_details':profile_details})
    
