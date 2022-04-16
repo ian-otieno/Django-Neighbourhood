@@ -261,7 +261,7 @@ def MyPosts(request, username):
     profile_details = Profile.objects.get(user = profile.id)
     posts = Post.objects.filter(author = profile.id).all()
     return render(request, 'My Posts.html', {'posts':posts, 'profile_details':profile_details})
-    
+
 def Search(request):
     if request.method == 'POST':
         search = request.POST['BusinessSearch']
@@ -303,4 +303,42 @@ def AddPost(request, username):
             return redirect('AddPost', username=username)
     else:
         form = AddPostForm()
-    return render(request, 'AddPost.html', {'form':form})   
+    return render(request, 'AddPost.html', {'form':form})
+
+@login_required(login_url='Login')
+def JoinNeighbourhood(request, title):
+    neighbourhoodTobejoined = NeighbourHood.objects.get(title = title)
+    currentUserProfile = request.user.profile
+
+    if not neighbourhoodTobejoined:
+        messages.error(request, "⚠️ NeighbourHood Does Not Exist!")
+        return redirect('Home')
+    else:
+        member_elsewhere = Membership.objects.filter(user = currentUserProfile)
+        joined = Membership.objects.filter(user = currentUserProfile, neighbourhood_membership = neighbourhoodTobejoined)
+        if joined:
+            messages.error(request, '⚠️ You Can Only Join A NeighbourHood Once!')
+            return redirect('SingleNeighbourhood', title = title)
+        elif member_elsewhere:
+            messages.error(request, '⚠️ You Are Already A Member In Another Neighbourhood! Leave To Join This One')
+            return redirect('SingleNeighbourhood', title = title)
+        else:
+            neighbourhoodToadd = Membership(user = currentUserProfile, neighbourhood_membership = neighbourhoodTobejoined)
+            neighbourhoodToadd.save()
+            messages.success(request, "✅ You Are Now A Member Of This NeighbourHood!")
+            return redirect('SingleNeighbourhood', title = title)
+
+@login_required(login_url='Login')
+def LeaveNeighbourhood(request, title):
+    neighbourhoodToLeave = NeighbourHood.objects.get(title = title)
+    currentUserProfile = request.user.profile
+
+    if not neighbourhoodToLeave:
+        messages.error(request, "⚠️ NeighbourHood Does Not Exist!")
+        return redirect('Home')
+    else:
+        membership = Membership.objects.filter(user = currentUserProfile, neighbourhood_membership = neighbourhoodToLeave)
+        if membership:
+            membership.delete()
+            messages.success(request, "✅ You Have Left This NeighbourHood!")
+            return redirect('SingleNeighbourhood', title = title)
