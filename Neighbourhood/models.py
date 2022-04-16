@@ -115,7 +115,7 @@ class Profile(models.Model):
     
     class Meta:
         verbose_name_plural = 'Profiles'
-        
+
 class Business(models.Model):
     name = models.CharField(max_length=150, verbose_name='Business Name', null=True, blank=True)
     description = models.TextField(blank=True, verbose_name='Description')
@@ -148,4 +148,19 @@ class Business(models.Model):
     
     class Meta:
         verbose_name_plural = 'Businesses'
+
+class Post(models.Model):
+    title = models.CharField(max_length=120, null=True, verbose_name='Post Title')
+    description = models.TextField(null=True, verbose_name='Post Description')
+    category = models.CharField(max_length=120, choices=CHOICES, verbose_name='Post Category')
+    author = models.ForeignKey(Profile, on_delete=models.CASCADE, verbose_name='Post Author')
+    neighbourhood = models.ForeignKey(NeighbourHood, on_delete=models.CASCADE, verbose_name='Rlated NeighbourHood')
+    date_created = models.DateTimeField(auto_now_add=True, verbose_name='Date Created')
+    date_updated = models.DateTimeField(auto_now=True, verbose_name='Date Updated')
+
+    def __str__(self):
+        return str(self.title)
+    
+    class Meta:
+        verbose_name_plural = 'Posts'
        
