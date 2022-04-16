@@ -90,4 +90,29 @@ def ActivateAccount(request, uidb64, token):
     else:
         messages.error(request, ('⚠️ The confirmation link was invalid, possibly because it has already been used.'))
         return redirect('Login')
-    
+ def Login(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+
+        user = authenticate(username=username, password=password)
+
+        if not User.objects.filter(username=username).exists():
+            messages.error(request, '⚠️ Username Does Not Exist! Choose Another One')
+            return redirect('Login')
+
+        if user is None:
+            messages.error(request, '⚠️ Username/Password Is Incorrect or Account Is Not Activated!! Please Try Again')
+            return redirect('Login')
+
+        if user is not None:
+            login(request, user)
+            return redirect('Home')
+        
+    return render(request, 'Login.html')
+
+@login_required(login_url='Login')
+def Logout(request):
+    logout(request)
+    return redirect('Home')
+   
