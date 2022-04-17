@@ -6,4 +6,4 @@ class NeighbourhoodConfig(AppConfig):
     name = 'Neighbourhood'
 
 def ready(self):
-        import Neighbourhood.signals 
+        import Neighbourhood.signals
