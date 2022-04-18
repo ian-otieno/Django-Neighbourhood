@@ -7,6 +7,8 @@ This Djanngo neighbourhood web application was created on 17/4/2022
 ## Description
 A Django web application that allows registered users to know about everything happening in their current neighborhoods. Registered user must be a member to a given neighbourhood to post or see news related.
 
+## Live Demo
+Click on the link below to view the site :https://ianeighbourhood.herokuapp.com/
 
 ## Requirements
 The user can perform the following functions:
