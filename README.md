@@ -1,4 +1,4 @@
-# Django-Neighbourhoodt
+# Django-Neighbourhood
 This Djanngo neighbourhood web application was created on 17/4/2022
 
 # Author
@@ -34,7 +34,7 @@ To get the project .......
   
 ##### Cloning the repository:  
  ```bash 
- https://github.com/ian-otieno/Django-Awards.git 
+ https://github.com/ian-otieno/Django-Neighbourhood.git 
 ```
 ##### Navigate into the folder and install requirements  
  ```bash 
