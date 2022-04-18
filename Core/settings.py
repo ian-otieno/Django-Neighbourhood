@@ -31,6 +31,8 @@ MODE=config("MODE",default="dev")
 SECRET_KEY=config('SECRET_KEY')
 DEBUG=config('DEBUG',default=False, cast=bool)
 
+EMAIL_FROM_USER = config("EMAIL_FROM_USER")
+EMAIL_BACKEND = config("EMAIL_BACKEND")
 EMAIL_USE_TLS = config('EMAIL_USE_TLS')
 EMAIL_HOST = config('EMAIL_HOST')
 EMAIL_PORT = config('EMAIL_PORT')
@@ -200,4 +202,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+TESTING = len(sys.argv) > 1 and sys.argv[1] == 'test'
 django_heroku.settings(locals())

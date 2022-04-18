@@ -26,7 +26,7 @@ class EmailThread(threading.Thread):
 
 def send_activation_email(user, request):
     current_site = get_current_site(request)
-    email_subject = 'Activate Your Nyumba Kumi Account'
+    email_subject = 'Activate Your Neighbourhood Account'
     email_body = render_to_string('Account Activation Email.html', {
         'user': user,
         'domain': current_site,
@@ -104,7 +104,6 @@ def Login(request):
 
         if user is None:
             messages.error(request, '⚠️ Username/Password Is Incorrect or Account Is Not Activated!! Please Try Again')
-            return redirect('Login')
 
         if user is not None:
             login(request, user)
