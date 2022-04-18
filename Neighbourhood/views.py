@@ -26,7 +26,7 @@ class EmailThread(threading.Thread):
 
 def send_activation_email(user, request):
     current_site = get_current_site(request)
-    email_subject = 'Activate Your Neighbourhood Account'
+    email_subject = 'Activate Your Nyumba Kumi Account'
     email_body = render_to_string('Account Activation Email.html', {
         'user': user,
         'domain': current_site,
@@ -90,6 +90,7 @@ def ActivateAccount(request, uidb64, token):
     else:
         messages.error(request, ('⚠️ The confirmation link was invalid, possibly because it has already been used.'))
         return redirect('Login')
+    
 def Login(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -115,6 +116,7 @@ def Login(request):
 def Logout(request):
     logout(request)
     return redirect('Home')
+
 def Home(request):
     neighbourhoods = NeighbourHood.objects.all()
     return render(request, 'Index.html', {'neighbourhoods':neighbourhoods})
@@ -180,6 +182,7 @@ def EditProfile(request, username):
         profile_form = UpdateProfileForm(instance=request.user.profile)
 
     return render(request, 'Edit Profile.html', {'user_form': user_form, 'profile_form': profile_form, 'profile_details':profile_details})
+
 @login_required(login_url='Login')
 def MyProfile(request, username):
     profile = User.objects.get(username=username)
@@ -238,6 +241,7 @@ def AddNeighbourhood(request, username):
     else:
         form = AddNeighbourhoodForm()
     return render(request, 'AddNeighbourhood.html', {'form':form, 'profile_details':profile_details})
+
 @login_required(login_url='Login')
 def MyNeighbourhoods(request, username):
     profile = User.objects.get(username=username)
@@ -342,7 +346,7 @@ def LeaveNeighbourhood(request, title):
             membership.delete()
             messages.success(request, "✅ You Have Left This NeighbourHood!")
             return redirect('SingleNeighbourhood', title = title)
-            
+
 @login_required(login_url='Login')
 def SingleNeighbourhood(request, title):
     current_profile = request.user.profile
