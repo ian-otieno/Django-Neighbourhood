@@ -5,5 +5,5 @@ class NeighbourhoodConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'Neighbourhood'
 
-def ready(self):
-        import Neighbourhood.signals
+    def ready(self):
+        import Neighbourhood.signals 

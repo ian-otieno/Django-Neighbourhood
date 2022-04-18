@@ -104,6 +104,7 @@ def Login(request):
 
         if user is None:
             messages.error(request, '⚠️ Username/Password Is Incorrect or Account Is Not Activated!! Please Try Again')
+            return redirect('Login')
 
         if user is not None:
             login(request, user)
